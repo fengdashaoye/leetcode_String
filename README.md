@@ -1,0 +1,2 @@
+# leetcode_String
+这是leetcode里string的思路和解法
