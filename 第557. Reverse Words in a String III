@@ -1,0 +1,94 @@
+Given a string, you need to reverse the order of characters in 
+each word within a sentence while still preserving whitespace and initial word order.
+Example 1:
+Input: "Let's take LeetCode contest"
+Output: "s'teL ekat edoCteeL tsetnoc"
+思路:一开始的想法是分别把各单词存储，再反转存储到新的String，但是超时了
+代码:
+public class Solution {
+    public String reverseWords(String s) {
+        ArrayList<ArrayList<Character>> list = new ArrayList<ArrayList<Character>>();
+        if(s == null || s.length() <= 0){
+            return s;
+        }
+        ArrayList<Character> content = new ArrayList<Character>();
+        for(int i = 0; i < s.length(); i++){
+            if(s.charAt(i) != ' '){
+                content.add(s.charAt(i));
+            }else{
+                list.add(content);
+                content = new ArrayList<Character>();
+            }
+        }
+        list.add(content);
+        return reverse_string(list);
+    }
+    public String reverse_string(ArrayList<ArrayList<Character>> list){
+        String content = "";
+        for(int i = 0; i < list.size(); i++){
+            for(int j = list.get(i).size()-1; j >= 0; j--){
+                content += list.get(i).get(j);
+            }
+            content += ' ';
+        }
+        content = content.substring(0,content.length()-1);
+        return content;
+    }
+}
+这种也超时了
+public class Solution {
+    public String reverseWords(String s) {
+        ArrayList<ArrayList<Character>> list = new ArrayList<ArrayList<Character>>();
+        if(s == null || s.length() <= 0){
+            return s;
+        }
+        String[] str = s.split(" ");
+        String content = "";
+        for(int i = 0; i < str.length; i++){
+            for(int j = str[i].length()-1; j >= 0; j--){
+                content += str[i].charAt(j);
+            }
+            content += ' ';
+        }
+        content = content.substring(0,content.length()-1);
+        return content;
+    }
+   
+}
+这种是编译不过的，String没有reverse(),StringBuffer有
+public class Solution {
+    public String reverseWords(String s) {
+        ArrayList<ArrayList<Character>> list = new ArrayList<ArrayList<Character>>();
+        if(s == null || s.length() <= 0){
+            return s;
+        }
+        String[] str = s.split(" ");
+        String content = "";
+        for(int i = 0; i < str.length; i++){
+            content = content.concat(str[i].reverse());
+            content += ' ';
+        }
+        content = content.substring(0,content.length()-1);
+        return content;
+    }
+   
+}
+代码:这就行
+public class Solution {
+    public String reverseWords(String s) {
+        ArrayList<ArrayList<Character>> list = new ArrayList<ArrayList<Character>>();
+        if(s == null || s.length() <= 0){
+            return s;
+        }
+        String[] str = s.split(" ");
+        StringBuffer content = new StringBuffer();
+        for(String a : str){
+            StringBuffer temp = new StringBuffer(a);//String变成StringBuffer
+            content.append(temp.reverse());
+            content.append(" ");
+        }
+        content.setLength(content.length()-1);
+        return content.toString();
+    }
+   
+}
