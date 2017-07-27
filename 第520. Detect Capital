@@ -1,0 +1,63 @@
+Given a word, you need to judge whether the usage of capitals in it is right or not.
+
+We define the usage of capitals in a word to be right when one of the following cases holds:
+
+All letters in this word are capitals, like "USA".
+All letters in this word are not capitals, like "leetcode".
+Only the first letter in this word is capital if it has more than one letter, like "Google".
+Otherwise, we define that this word doesn't use capitals in a right way.
+思路：这道题简直不要太简单，判断大写小写即可，其实还有另一种思路，判定头两个字母的属性来判定决定后续过程
+代码:
+public class Solution {
+    public boolean detectCapitalUse(String word) {
+        if(word == null || word.length() <= 1){
+            return true;
+        }
+        int length = word.length();
+        if(word.charAt(0) >= 'A' && word.charAt(0) <= 'Z'){
+            if(all_big(word.substring(1, length))){
+                return true;
+            }else if(all_small(word.substring(1, length))){
+                return true;
+            }
+            return false;
+        }else if(word.charAt(0) >= 'a' && word.charAt(0) <= 'z'){
+            if(all_small(word)){
+                return true;
+            }
+            return false;
+            
+        }
+        
+        return false; 
+    }
+    public boolean all_big(String content){
+        for(int i = 0; i < content.length(); i++){
+            if(!(content.charAt(i) >= 'A' && content.charAt(i) <= 'Z')){
+                return false;
+            }
+        }
+        return true;
+    }
+    public boolean all_small(String content){
+        for(int i = 0; i < content.length(); i++){
+            if(!(content.charAt(i) >= 'a' && content.charAt(i) <= 'z')){
+                return false;
+            }
+        }
+        return true;
+    }
+}
+
+别人的代码:
+(1)
+public boolean detectCapitalUse(String word) {
+        if (word.length() < 2) return true;
+        if (word.toUpperCase().equals(word)) return true;
+        if (word.substring(1).toLowerCase().equals(word.substring(1))) return true;
+        return false;
+}
+(2)
+public boolean detectCapitalUse(String word) {
+    return word.matches("[A-Z]*|[A-Z]?[a-z]*");
+}
