@@ -1,0 +1,85 @@
+题目:
+Given a string containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid.
+
+The brackets must close in the correct order, "()" and "()[]{}" are all valid but "(]" and "([)]" are not.
+思路:想成了abd(........)这样完全对称才对，结果不是，"()[]{}"是对的，但是注意，这种"([])"也是对的，用栈，如果怕栈深度不够的话，用动态数组替代
+也是可以的。
+这个链表只包含那6种字符
+代码:一开始那种想法的代码:
+public class Solution {
+    public boolean isValid(String s) {
+        if(s == null || s.length() <= 1){
+            return false;
+        }
+        int i = 0;
+        int j = s.length() - 1;
+        int panduan = 0;
+        while(i < j){
+            if(assess_left(s.charAt(j)) || assess_right(s.charAt(i))){
+                return false;
+            }
+            if(assess_left(s.charAt(i))){
+                panduan = 1;
+                if(assess_right(s.charAt(j))){
+                    if(!(assess(s.charAt(i), s.charAt(j)))){
+                        return false;
+                    }
+                    i++;
+                    j--;
+                    panduan = 0;
+                    continue;
+                }else{
+                    j--;
+                    continue;
+                }
+            }
+            if(assess_right(s.charAt(j))){
+                panduan = 1;
+                if(assess_left(s.charAt(i))){
+                    if(!(assess(s.charAt(i), s.charAt(j)))){
+                        return false;
+                    }
+                    i++;
+                    j--;
+                    panduan = 0;
+                    continue;
+                }else{
+                    i++;
+                    continue;
+                }
+            }
+            i++;
+            j--;
+        }
+        if(panduan == 1){
+            return false;
+        }
+        return true;
+        
+    }
+    public boolean assess_left(char content){
+        if(content == '(' || content == '{' || content == '['){
+            return true;
+        }
+        return false;
+    }
+    public boolean assess_right(char content){
+        if(content == ')' || content == '}' || content == ']'){
+            return true;
+        }
+        return false;
+    }
+    public boolean assess(char content1, char content2){
+        if(content1 == '[' && content2 == ']'){
+            return true;
+        }else if(content1 == '{' && content2 == '}'){
+            return true;
+        }else if(content1 == '(' && content2 == ')'){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }
+    
+}
