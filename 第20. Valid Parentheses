@@ -5,6 +5,58 @@ The brackets must close in the correct order, "()" and "()[]{}" are all valid bu
 思路:想成了abd(........)这样完全对称才对，结果不是，"()[]{}"是对的，但是注意，这种"([])"也是对的，用栈，如果怕栈深度不够的话，用动态数组替代
 也是可以的。
 这个链表只包含那6种字符
+可用代码:打败90%哦
+public class Solution {
+    public boolean isValid(String s) {
+        if(s == null || s.length() <= 1 || s.length()%2 != 0){
+            return false;
+        }
+        ArrayList<Character> list = new ArrayList<Character>();
+        list.add(s.charAt(0));
+        if(assess_right(s.charAt(0))){
+            return false;
+        }
+        for(int i = 1; i < s.length(); i++){
+            if(assess_left(s.charAt(i))){
+                list.add(s.charAt(i));
+            }else{
+                if(!assess(list.get(list.size()-1),s.charAt(i))){
+                    return false;
+                }
+                list.remove(list.size()-1);
+            }
+        }
+        if(list.size() > 0){
+            return false;
+        }
+        return true;
+        
+    }
+    public boolean assess_left(char content){
+        if(content == '(' || content == '{' || content == '['){
+            return true;
+        }
+        return false;
+    }
+    public boolean assess_right(char content){
+        if(content == ')' || content == '}' || content == ']'){
+            return true;
+        }
+        return false;
+    }
+    public boolean assess(char content1, char content2){
+        if(content1 == '[' && content2 == ']'){
+            return true;
+        }else if(content1 == '{' && content2 == '}'){
+            return true;
+        }else if(content1 == '(' && content2 == ')'){
+            return true;
+        }else{
+            return false;
+        }
+        
+    }  
+}
 代码:一开始那种想法的代码:
 public class Solution {
     public boolean isValid(String s) {
