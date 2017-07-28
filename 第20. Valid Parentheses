@@ -115,6 +115,7 @@ public class Solution {
         }
         return false;
     }
+    
     public boolean assess_right(char content){
         if(content == ')' || content == '}' || content == ']'){
             return true;
