@@ -1,0 +1,55 @@
+题目:
+Implement strStr().
+
+Returns the index of the first occurrence of needle in haystack, or -1 if needle is not part of haystack.
+strstr(str1,str2); 函数用于判断字符串str2是否是str1的子串。如果是,则该函数返回str2在str1中首次出现的地址;否则,返回NULL
+思路:一开始的思路很简单，出去边界条件判断外，找到字串的开头，然后往后延伸判断即可，但是可能这种方法时间效率不高
+从长度判断入手也不错
+代码:
+public class Solution {
+    public int strStr(String haystack, String needle) {
+        if(haystack.equals(needle) || needle == null || needle.length() <= 0){
+            return 0;
+        }
+        if(haystack == null || haystack.length() <= 0){
+            return -1;
+        }
+        int i = 0;
+        for(; i < haystack.length(); i++){
+            if(haystack.charAt(i) == needle.charAt(0)){
+                int j = 0;
+                int t = i;
+                if(haystack.length() - t < needle.length()){
+                    return -1;
+                }
+                while(j < needle.length() && haystack.charAt(t) == needle.charAt(j)){
+                    t++;
+                    j++;
+                }
+                if(j == needle.length()){
+                    return i;
+                }
+            }
+        }
+        return -1;
+        
+    }
+}
+从长度判断入手的代码:
+public class Solution {
+    public int strStr(String haystack, String needle) {
+        int l1 = haystack.length(), l2 = needle.length();
+        if (l1 < l2) {
+            return -1;
+        } else if (l2 == 0) {
+            return 0;
+        }
+        int threshold = l1 - l2;
+        for (int i = 0; i <= threshold; ++i) {
+            if (haystack.substring(i,i+l2).equals(needle)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+}
