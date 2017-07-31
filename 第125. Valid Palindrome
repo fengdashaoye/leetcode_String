@@ -1,0 +1,64 @@
+Given a string, determine if it is a palindrome, considering only alphanumeric characters and ignoring cases.
+
+For example,
+"A man, a plan, a canal: Panama" is a palindrome.
+"race a car" is not a palindrome.
+思路；还是判断回文字串，根据只不过是可能存在非字母、数字的字符，除此以外根据例子原String可能存在大小写
+在大小写方面利用.toLowerCase();全变成小写，然后定义两个坐标，不断判断即可。
+代码:
+public class Solution {
+    public boolean isPalindrome(String s) {
+        if(s == null || s.length() <= 0){
+            return true;
+        }
+        String content = s.toLowerCase();
+        int i = 0;
+        int j = content.length()-1;
+        while(i < j){
+            if(belong(content.charAt(i))){
+                if(belong(content.charAt(j))){
+                    if(content.charAt(i) == content.charAt(j)){
+                        i++;
+                        j--;
+                        continue;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    j--;
+                    continue;
+                }
+            }
+            if(belong(content.charAt(j))){
+                if(belong(content.charAt(i))){
+                    if(content.charAt(i) == content.charAt(j)){
+                        i++;
+                        j--;
+                        continue;
+                    }else{
+                        return false;
+                    }
+                }else{
+                    i++;
+                    continue;
+                }
+            }
+            i++;
+            j--;
+        }
+        return true;
+        
+    }
+    public boolean belong(char content){
+        if(content >= 'a' && content <= 'z'){
+            return true;
+        }
+        if(content >= 'A' && content <= 'Z'){
+            return true;
+        }
+        if(content >= '0' && content <= '9'){
+            return true;
+        }
+        return false;
+    }
+}
