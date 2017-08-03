@@ -38,6 +38,7 @@ except we can't omit the first parenthesis pair to break the one-to-one mapping 
 
 总结一下，只要右不空，就都加 
 如果右空，则左不空就左加
+如果单纯从图上看，嗯，挺合理的
 代码:
 /**
  * Definition for a binary tree node.
