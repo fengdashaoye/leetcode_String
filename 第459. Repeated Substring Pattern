@@ -110,12 +110,13 @@ public boolean repeatedSubstringPattern(String str) {
     }
     这是O(n)的做法
     好像是KMP算法，经过验算是对的
+    试验"abcdabcd""abcdabcdabcd""abcdabdc"
     public boolean repeatedSubstringPattern(String str) {
 	        //This is the kmp issue
 	        int[] prefix = kmp(str);
 	        int len = prefix[str.length()-1];
 	        int n = str.length();
-	        return (len > 0 && n%(n-len) == 0);
+	        return (len > 0 && n%(n-len) == 0);//不符的话len为res最后一位，应为0，符合的话len > 0，n-len为一个重复字串的长度。
 	    }
 	    private int[] kmp(String s){
 	        int len = s.length();
