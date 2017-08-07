@@ -37,21 +37,19 @@ public class Solution {
                     if(start.charAt(j) == start.charAt(j-1)){
                         number++;
                     }else{
-                        content += String.valueOf(number);
-                        content += start.charAt(j-1);
+                        content = content + String.valueOf(number) + start.charAt(j-1);
                         number = 1;
                     }
                 }
             }
-            content += String.valueOf(number);
-            content += start.charAt(start.length()-1);
+            content = content + String.valueOf(number) + start.charAt(start.length()-1);
             start = content;
         }
         return start;
         
     }
+    
 }
-
 我看好多方法跟我一样，都为O(n次方)，也是从1开始，没有n个输出字符串的关系
 public class Solution {
     public String countAndSay(int n) {
