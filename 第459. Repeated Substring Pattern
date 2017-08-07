@@ -1,0 +1,143 @@
+Given a non-empty string check if it can be constructed by taking a substring of it and appending multiple copies of the substring together. You may assume the given string consists of lowercase English letters only and its length will not exceed 10000.
+
+Example 1:
+Input: "abab"
+
+Output: True
+
+Explanation: It's the substring "ab" twice.
+Example 2:
+Input: "aba"
+
+Output: False
+Example 3:
+Input: "abcabcabcabc"
+
+Output: True
+
+Explanation: It's the substring "abc" four times. (And the substring "abcabc" twice.)
+
+思路:重复的字串嘛，一开始的思路是，因为重复，所以肯定从字符串开头开始，从前往后遍历，如果存在某个字母与开头字母相同，如果这段长度能够被
+字符串长度整除，则用动态数组记下这个坐标。依次完后不断判断数组里的坐标，因为每个坐标其实看做是长度，0-该坐标为第一个重复的字串，则判断这个
+字串在字符串中是否重复即可，时间复杂度还是有点高的，排在25%-33%之间。稍微改进一下就到42%
+代码:
+public class Solution {
+    public boolean repeatedSubstringPattern(String s) {
+        if(s == null || s.length() <= 1){
+            return false;
+        }
+        ArrayList<Integer> list = new ArrayList<Integer>();
+        for(int i = 1; i < s.length(); i++){//变成 i <= s.length()/2
+            if(s.charAt(i) == s.charAt(0)){
+                if(s.length() % i == 0){
+                    list.add(i);
+                }
+            }
+        }
+        if(list.size() == s.length()-1){
+            return true;
+        }
+        if(list.size() <= 0){
+            return false;
+        }
+        for(int i = 0; i < list.size(); i++){
+            if(panduan(list, list.get(i), s)){
+                return true;
+            }
+        }
+        return false;
+    }
+    
+    public boolean panduan(ArrayList<Integer> list, int content, String s){
+        int length = content;
+        int i = 0;
+        int panduan = 0;
+        while(i < content){
+            int number = i + length;
+            int start = s.charAt(i);
+            for(; number < s.length(); number += length){
+                if(start != s.charAt(number)){
+                    return false;
+                }
+            }
+            i++;
+        }
+        return true;
+        
+    }
+    
+}
+
+
+这种思路也不错，找到重复字串后，重复该字串好多次，比较重复后的和原来的字串是否相等，但是重复率也是有点高的O(n次方)
+代码:
+public boolean repeatedSubstringPattern(String str) {
+	int l = str.length();
+	for(int i=l/2;i>=1;i--) {
+		if(l%i==0) {
+			int m = l/i;
+			String subS = str.substring(0,i);
+			StringBuilder sb = new StringBuilder();
+			for(int j=0;j<m;j++) {
+				sb.append(subS);
+			}
+			if(sb.toString().equals(str)) return true;
+		}
+	}
+	return false;
+}
+The length of the repeating substring must be a divisor of the length of the input string
+Search for all possible divisor of str.length, starting for length/2
+If i is a divisor of length, repeat the substring from 0 to i the number of times i is contained in s.length
+If the repeated substring is equals to the input str return true
+上一种方法的改进
+代码:
+public boolean repeatedSubstringPattern(String str) {
+        int len = str.length();
+    	for(int i=len/2 ; i>=1 ; i--) {
+    		if(len%i == 0) {
+    			int m = len/i;
+    			String subS = str.substring(0,i);
+    			int j;
+    			for(j=1;j<m;j++) {
+    				if(!subS.equals(str.substring(j*i,i+j*i))) break;
+    			}
+    			if(j==m)
+    			    return true;
+    		}
+    	}
+    	return false;
+    }
+    这是O(n)的做法
+    好像是KMP算法，经过验算是对的
+    public boolean repeatedSubstringPattern(String str) {
+	        //This is the kmp issue
+	        int[] prefix = kmp(str);
+	        int len = prefix[str.length()-1];
+	        int n = str.length();
+	        return (len > 0 && n%(n-len) == 0);
+	    }
+	    private int[] kmp(String s){
+	        int len = s.length();
+	        int[] res = new int[len];
+	        char[] ch = s.toCharArray();
+	        int i = 0, j = 1;
+	        res[0] = 0;
+	        while(i < ch.length && j < ch.length){
+	            if(ch[j] == ch[i]){
+	                res[j] = i+1;
+	                i++;
+	                j++;
+	            }else{
+	                if(i == 0){
+	                    res[j] = 0;
+	                    j++;
+	                }else{
+	                    i = res[i-1];
+	                }
+	            }
+	        }
+	        return res;
+	    }
+
+
