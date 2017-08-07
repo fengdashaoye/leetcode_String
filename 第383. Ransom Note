@@ -1,0 +1,52 @@
+Given an arbitrary ransom note string and another string containing letters from all the magazines, write a function that will return true if the ransom note can be constructed from the magazines ; otherwise, it will return false.
+
+Each letter in the magazine string can only be used once in your ransom note.
+
+Note:
+You may assume that both strings contain only lowercase letters.
+
+canConstruct("a", "b") -> false
+canConstruct("aa", "ab") -> false
+canConstruct("aa", "aab") -> true
+由右边的能否组成左边的，右边的每次仅能出现一次。我一开始的想法是利用hashmap，分别存储两个字符串的对应字符出现的个数
+然后比较是否左边的字符都存在右边，个数是否够。
+代码:
+import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map.Entry;
+import java.util.Map;
+public class Solution {
+    public boolean canConstruct(String ransomNote, String magazine) {
+        if(magazine.length() < ransomNote.length()){
+            return false;
+        }
+        HashMap<Character, Integer> ran = new HashMap<Character, Integer>();
+        HashMap<Character, Integer> mag = new HashMap<Character, Integer>();
+        for(int i = 0; i < ransomNote.length(); i++){
+            if(ran.containsKey(ransomNote.charAt(i))){
+                ran.put(ransomNote.charAt(i), ran.get(ransomNote.charAt(i))+1);
+            }else{
+                ran.put(ransomNote.charAt(i), 1);
+            }
+        }
+        for(int i = 0; i < magazine.length(); i++){
+            if(mag.containsKey(magazine.charAt(i))){
+                mag.put(magazine.charAt(i), mag.get(magazine.charAt(i))+1);
+            }else{
+                mag.put(magazine.charAt(i), 1);
+            }
+        }
+        for(Entry<Character, Integer> entry : ran.entrySet()){
+            if(mag.containsKey(entry.getKey())){
+                if(!(mag.get(entry.getKey()) >= entry.getValue())){
+                    return false;
+                }
+            }else{
+                return false;
+            }
+        }
+        return true;
+        
+    }
+}
