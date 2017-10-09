@@ -1,0 +1,63 @@
+Given n pairs of parentheses, write a function to generate all combinations of well-formed parentheses.
+
+For example, given n = 3, a solution set is:
+
+[
+  "((()))",
+  "(()())",
+  "(())()",
+  "()(())",
+  "()()()"
+]
+
+思路:这道题是要用递归的，右边的括号要基于左边的括号，如n=3时，((()))应该是可以理解的，但是(())()如何解释呢，且往下看
+在得到((()))时这一层递归结束了，返回上一层递归，即left=2时这里结束了，跑到了下面看right<left
+这是n=3时跑的全过程:
+(
+((
+(((
+((()
+((())
+((()))
+(()
+(()(
+(()()
+(()())
+(())
+(())(
+(())()
+()
+()(
+()((
+()(()
+()(())
+()()
+()()(
+()()()
+if(left < length){
+            backtrack(content, result + '(', left + 1, right, length);
+        }
+        if(right < left){//这是关键,小于left,不是length
+            backtrack(content, result + ')', left, right + 1, length);
+        }
+代码:
+class Solution {
+    public List<String> generateParenthesis(int n) {
+        List<String> content = new ArrayList<String>();
+        backtrack(content, "", 0, 0, n);
+        return content;
+        
+        
+    }
+    public void backtrack(List<String> content, String result, int left, int right, int length){
+        if(result.length() == length * 2){
+            content.add(result);
+        }
+        if(left < length){
+            backtrack(content, result + '(', left + 1, right, length);
+        }
+        if(right < left){//这是关键,小于left,不是length
+            backtrack(content, result + ')', left, right + 1, length);
+        }
+    }
+}
