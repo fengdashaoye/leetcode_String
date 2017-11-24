@@ -1,0 +1,105 @@
+Given an array of strings, group anagrams together.
+
+For example, given: ["eat", "tea", "tan", "ate", "nat", "bat"], 
+Return:
+
+[
+  ["ate", "eat","tea"],
+  ["nat","tan"],
+  ["bat"]
+]
+
+思路：因为都是小写字母，在计算单词中各字母的数量时，利用[字母-'a']++来得到数量。而且步骤有些繁杂，通过了前面的案例，但是最后一个案例超时了。
+
+他的方法很厉害：首先将字符串变成字符数组，然后将其排序，再变成string，再看hashmap中是否存在以该string为key的属性存在。
+这个思路非常好，排序再转成string后就一样了，利用hashmap判断key。非常好
+代码：
+class Solution {
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> result = new ArrayList<List<String>>();
+         if (strs == null || strs.length == 0) return new ArrayList<List<String>>();
+        Map<String, List<String>> map = new HashMap<String, List<String>>();
+        for (String s : strs) {
+            char[] ca = s.toCharArray();
+            Arrays.sort(ca);
+            String keyStr = String.valueOf(ca);
+            if (!map.containsKey(keyStr)) map.put(keyStr, new ArrayList<String>());
+            map.get(keyStr).add(s);
+        }
+        return new ArrayList<List<String>>(map.values());
+    }
+    
+}
+
+代码：
+class Solution { //最后一个case超时了
+    public List<List<String>> groupAnagrams(String[] strs) {
+        List<List<String>> result = new ArrayList<List<String>>();
+        if(strs == null || strs.length <= 0){
+            return result;
+        }
+        List<String> content = new ArrayList<String>();
+        List<int[]> duiying = new ArrayList<int[]>();
+        content.add(strs[0]);
+        result.add(content);
+        int[] zimu = new int[26];
+        //zimu = ini(zimu);
+        duiying.add(chaijie(strs[0], zimu));
+        int panduan = 0;
+        for(int i = 1; i < strs.length; i++){
+            panduan = 0;
+            for(int j = 0; j < result.size(); j++){
+                if(strs[i].length() != result.get(j).get(0).length()){
+                    continue;
+                }
+                if(exist(duiying.get(j), strs[i])){
+                    panduan = 1;
+                    result.get(j).add(strs[i]);
+                    break;
+                }
+            
+            }
+            if(panduan == 0){
+                content = new ArrayList<String>();
+                content.add(strs[i]);
+                result.add(content);
+                zimu = new int[26];
+                //zimu = ini(zimu);
+                duiying.add(chaijie(strs[i], zimu));
+            }
+        }
+        return result;
+    }
+    public boolean exist(int[] content, String after){
+        int[] middle = new int[26];
+        for(int i = 0; i < 26; i++){
+            middle[i] = content[i];
+        }
+        for(int i = 0; i < after.length(); i++){
+            middle[after.charAt(i) - 'a']--;
+            if(middle[after.charAt(i) - 'a'] < 0){
+                return false;
+            }
+        }
+        for(int i = 0; i < 26; i++){
+            if(middle[i] != 0){
+                return false;
+            }
+        }
+        return true;
+        
+    }
+    public int[] chaijie(String content, int[] zimu){
+        for(int i = 0; i < content.length(); i++){
+            zimu[content.charAt(i) - 'a']++;
+        }
+        return zimu;
+    }
+    public int[] ini(int[] zimu){
+        for(int i = 0; i < zimu.length; i++){
+            zimu[i] = 0;
+        }
+        return zimu;
+    }
+    
+}
