@@ -1,0 +1,170 @@
+Given an encoded string, return it's decoded string.
+
+The encoding rule is: k[encoded_string], where the encoded_string inside the square brackets is being repeated exactly k times. 
+Note that k is guaranteed to be a positive integer.
+
+You may assume that the input string is always valid; No extra white spaces, square brackets are well-formed, etc.
+
+Furthermore, you may assume that the original data does not contain any digits and that digits are only for those repeat numbers, 
+k. For example, there won't be input like 3a or 2[4].
+
+Examples:
+
+s = "3[a]2[bc]", return "aaabcbc".
+s = "3[a2[c]]", return "accaccacc".
+s = "2[abc]3[cd]ef", return "abcabccdcdcdef".
+
+思路：这道题独立完成，很不错。
+首先需要记录下相应的'['和']'的对应位置。而且需要顺序。
+此时想到了栈结构，遇到'['的位置就压入栈，遇到']'就将']的位置取出和栈顶取出且pop。这是这两个位置就是对应位置。
+存储进left和right的list中，而且,list前面位置的'['和']'坐标之间的内容需要优先处理。
+想到用栈结构来处理，很完美。
+
+然后分别处理'['和']'坐标之间的内容。
+首先处理第一个之间的内容，这个不放进循环中。利用stringbuffer(这个比较好操作，如append和insert操作)。
+需要注意'['前面的数字内容，可能是'3'，也可能是'100'所以处理过程需要注意，left_position和right_position不断更新。
+然后将pre_left_position=left_position和pre_right_position = right_position。
+pre_left_position和pre_right_position在后面循环中需要用到，如这样的示例2[a3[ab]c]，此时
+循环之前处理得到ababab，然后需要将'3'之前的a和']'之后的c也加入stringbuffer中，变成aabababc。再然后根据'['之前的数字2,将其重复两遍。
+具体处理过程以如上面所说。
+
+循环中处理的内容其实也就两种。
+第一种left_position <= pre_left_position。如这样的[3[ab]]
+第二种是left_position >= pre_right_position。如这样的2[abc]a2[ab]。
+分别处理即可。。。
+
+最后注意特殊情况，如ab3[afhhf]fa[]err
+最前面的ab和最后面的err需要注意，不要忘了。。。
+
+
+代码：
+class Solution {
+    public String decodeString(String s) {
+        if(s == null || s.length() == 0){
+            return s;
+        }
+        int low = 0;
+        int high = s.length();
+        ArrayList<Integer> left = new ArrayList<Integer>();
+        ArrayList<Integer> right = new ArrayList<Integer>();
+        Stack<Integer> stack = new Stack<Integer>(); 
+        for(int i = 0; i < s.length(); i++){
+            if(s.charAt(i) == '['){
+                stack.push(i);
+            }else if(s.charAt(i) == ']'){
+                left.add(stack.peek());
+                right.add(i);
+                stack.pop();
+            }
+        }
+        String result = "";
+        StringBuffer s2 = new StringBuffer();
+        int left_position = 0;
+        int right_position = 0;
+        String content = "";
+        int pre_left_position = 0;
+        int pre_right_position = 0;
+        if(left.size() == 0){
+            return s;   
+        }
+        if(left.size() > 0){
+            left_position = left.get(0);
+            right_position = right.get(0);
+            //System.out.println("left_position: " + left_position);
+            if(right_position - left_position > 1){//避免出现"[]"这种情况
+                content = s.substring(left_position + 1, right_position);
+            }
+            left_position--;
+            if(left_position >= 0 &&  s.charAt(left_position) >= '0' && s.charAt(left_position) <= '9'){
+                int number = 0;
+                int number2 = 0;
+                int number3 = 0;
+                while(left_position >= 0 && s.charAt(left_position) >= '0' && s.charAt(left_position) <= '9'){//避免这种"100[ab]"
+                    number2 = s.charAt(left_position) - '0';
+                    number += number2 * Math.pow(10, number3);
+                    left_position--;
+                    number3++;
+                }//这时候left_position是a23[]中的a
+                for(int t = 0; t < number; t++){
+                    s2.append(content);
+                }
+            }
+            //System.out.println(s2.toString());
+            pre_left_position = left_position;
+            pre_right_position = right_position;
+        }
+        for(int i = 1; i < left.size(); i++){//注意.substring时区分数字
+            left_position = left.get(i);
+            right_position = right.get(i);
+            /*System.out.println(left_position + " " + right_position + "pre_left_position: " + pre_left_position + "pre_right_position" + 
+                              pre_right_position);*/
+            if(left_position <= pre_left_position && right_position >= pre_right_position){//应该只有这两种情况
+                if(pre_left_position >= 0 && !(s.charAt(pre_left_position) >= '0' && s.charAt(pre_left_position) <= '9') && s.charAt(pre_left_position) != '['){
+                    s2.insert(0, s.substring(left_position + 1, pre_left_position + 1));//不包括'[a23['以及之前23'['中的23,23是示例
+                }
+                if(right_position - pre_right_position > 1){//避免']]',是为了存在']abc]'这种情况
+                    s2.append(s.substring(pre_right_position + 1, right_position));
+                }
+                //System.out.println(s2.toString());
+                left_position--;
+                //System.out.println("left_position: " + left_position);
+                if(left_position >= 0 &&  s.charAt(left_position) >= '0' && s.charAt(left_position) <= '9'){
+                    int number = 0;
+                    int number2 = 0;
+                    int number3 = 0;
+                    while(left_position >= 0 && s.charAt(left_position) >= '0' && s.charAt(left_position) <= '9'){//避免这种"100[ab]"
+                        number2 = s.charAt(left_position) - '0';
+                        number += number2 * Math.pow(10, number3);
+                        left_position--;
+                        number3++;
+                    }//这时候left_position是a23[]中的a
+                    StringBuffer middle = new StringBuffer();
+                    for(int t = 0; t < number; t++){//
+                        middle.append(s2.toString());
+                    }
+                    s2 = middle;
+                }
+                pre_left_position = left_position < pre_left_position ? left_position : pre_left_position;//注意这种情况[...[]....[]]
+                pre_right_position = right_position > pre_right_position ? right_position : pre_right_position;
+            }else if(left_position >= pre_left_position && left_position >= pre_right_position){//[]...[]
+                int number = 0;
+                int number2 = 0;
+                int number3 = 0;
+                String middle = s.substring(left_position + 1, right_position);
+                //System.out.println(middle);
+                left_position--;
+                //System.out.println("left_position: " + left_position);
+                while(left_position >= 0 && s.charAt(left_position) >= '0' && s.charAt(left_position) <= '9'){//避免这种"100[ab]"
+                    number2 = s.charAt(left_position) - '0';
+                    number += number2 * Math.pow(10, number3);
+                    left_position--;
+                    number3++;
+                }//这时候left_position是a23[]中的a
+                //System.out.println("left_position: " + left_position + "number: " + number + "middle: " + middle);
+                if(left_position - pre_right_position >= 1){//避免这种情况"]a3[]"
+                    s2.append(s.substring(pre_right_position + 1, left_position + 1));
+                }
+                //System.out.println(s2.toString());
+                
+                for(int t = 0; t < number; t++){
+                    s2.append(middle);
+                }
+                //System.out.println(s2.toString());
+                pre_left_position = left_position < pre_left_position ? left_position : pre_left_position;//注意这种情况[...[]....[]]
+                pre_right_position = right_position > pre_right_position ? right_position : pre_right_position;
+            }
+            
+            
+        }
+        //System.out.println(s2.toString());
+       // System.out.println("pre_left_position: " + pre_left_position + "pre_right_position: " + pre_right_position);
+        if(pre_right_position < s.length() - 1){//更新后的right
+            s2.append(s.substring(pre_right_position + 1, s.length()));
+        }
+        if(pre_left_position >= 0){//更新后的left
+            s2.insert(0, s.substring(0, pre_left_position + 1));
+        }
+        return s2.toString();
+        
+    }
+}
