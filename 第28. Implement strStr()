@@ -57,6 +57,7 @@ public class Solution {
 kmp算法
 //虽然使用string的indexOf方法很好，但是这里还是用kmp算法吧，因为可能会被问
         //kmp算法https://blog.csdn.net/starstar1992/article/details/54913261/
+        https://blog.csdn.net/christ1750/article/details/51259425
  class Solution {
     public int strStr(String haystack, String needle) {
         if (haystack == null || needle == null) return -1;    
